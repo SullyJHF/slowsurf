@@ -65,3 +65,8 @@ temp/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Backup files
+*.bak
+*.tmp
+manifest.json.bak

@@ -9,7 +9,8 @@
       "Bash(ls:*)",
       "Bash(magick identify:*)",
       "Bash(magick:*)",
-      "Bash(./bundle.sh)"
+      "Bash(./bundle.sh)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }

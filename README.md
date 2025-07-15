@@ -101,6 +101,34 @@ slowsurf/
 5. Make changes to the code
 6. Click the refresh icon on the extension card to reload
 
+### Creating Releases
+
+This project uses automated semantic versioning and releases. Use the provided script to create new versions:
+
+```bash
+# Increment patch version (1.0.0 -> 1.0.1)
+./tag.sh patch
+
+# Increment minor version (1.0.0 -> 1.1.0)
+./tag.sh minor
+
+# Increment major version (1.0.0 -> 2.0.0)
+./tag.sh major
+```
+
+**What the script does:**
+1. Updates the version in `manifest.json`
+2. Commits the change with message "Version vX.X.X"
+3. Creates a git tag `vX.X.X`
+4. Pushes to GitHub
+5. Triggers GitHub Actions to build and create a release
+
+**Manual Bundle Creation:**
+```bash
+# Create extension bundle for Chrome Web Store
+./bundle.sh
+```
+
 ### Testing
 
 Test the extension with various website patterns and scenarios:
