@@ -7,6 +7,20 @@ set -e
 
 echo "🚀 Deploying SlowSurf to slowsurf.solvy.dev..."
 
+# Function to detect and use the correct docker compose command
+docker_compose() {
+    if command -v docker-compose &> /dev/null; then
+        # Use older docker-compose (hyphenated)
+        docker-compose "$@"
+    elif docker compose version &> /dev/null; then
+        # Use newer docker compose (space-separated)
+        docker compose "$@"
+    else
+        echo "❌ Error: Neither 'docker-compose' nor 'docker compose' found"
+        exit 1
+    fi
+}
+
 # Check if we're in the right directory
 if [ ! -f "docker-compose.yml" ]; then
     echo "❌ Error: docker-compose.yml not found. Are you in the right directory?"
@@ -24,7 +38,7 @@ done
 
 # Stop existing containers
 echo "🛑 Stopping existing containers..."
-docker-compose down || true
+docker_compose down || true
 
 # Remove old images
 echo "🧹 Cleaning up old images..."
@@ -32,14 +46,14 @@ docker image prune -f || true
 
 # Build and start new containers
 echo "🔨 Building and starting containers..."
-docker-compose up -d --build
+docker_compose up -d --build
 
 # Wait for container to be ready
 echo "⏳ Waiting for container to be ready..."
 sleep 5
 
 # Check if container is running
-if docker-compose ps | grep -q "Up"; then
+if docker_compose ps | grep -q "Up"; then
     echo "✅ Container is running successfully!"
     
     # Test the health endpoint
@@ -72,6 +86,6 @@ if docker-compose ps | grep -q "Up"; then
     echo "🔒 Privacy Policy: https://slowsurf.solvy.dev/privacy"
 else
     echo "❌ Container failed to start"
-    docker-compose logs
+    docker_compose logs
     exit 1
 fi
