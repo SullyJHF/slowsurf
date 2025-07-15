@@ -1,5 +1,6 @@
 class SlowSurfBackground {
   constructor() {
+    this.bypassedTabs = new Map(); // Track tabs that have completed delay for specific sites
     this.init();
   }
 
@@ -10,9 +11,30 @@ class SlowSurfBackground {
       }
     });
 
+    // Clean up bypassed tabs when they're closed
+    chrome.tabs.onRemoved.addListener((tabId) => {
+      this.bypassedTabs.delete(tabId);
+    });
+
     chrome.storage.onChanged.addListener((changes, namespace) => {
       if (namespace === 'sync') {
         console.log('Settings changed:', changes);
+      }
+    });
+
+    // Listen for messages from delay page
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.action === 'markTabBypassed' && sender.tab) {
+        const tabId = sender.tab.id;
+        const targetUrl = message.targetUrl;
+        
+        // Store that this tab has bypassed the delay for this specific site
+        if (!this.bypassedTabs.has(tabId)) {
+          this.bypassedTabs.set(tabId, new Set());
+        }
+        this.bypassedTabs.get(tabId).add(this.getDomainFromUrl(targetUrl));
+        
+        console.log(`Tab ${tabId} bypassed delay for ${this.getDomainFromUrl(targetUrl)}`);
       }
     });
   }
@@ -38,6 +60,13 @@ class SlowSurfBackground {
       const matchedWebsite = this.findMatchingWebsite(url, settings.websites);
       
       if (matchedWebsite) {
+        // Check if this tab has already bypassed the delay for this domain
+        const domain = this.getDomainFromUrl(url);
+        if (this.bypassedTabs.has(tabId) && this.bypassedTabs.get(tabId).has(domain)) {
+          console.log(`Tab ${tabId} already bypassed delay for ${domain}, allowing access`);
+          return;
+        }
+        
         console.log(`Matched website: ${matchedWebsite.pattern} for URL: ${url}`);
         
         await chrome.tabs.update(tabId, {
@@ -62,6 +91,14 @@ class SlowSurfBackground {
     ];
 
     return excludedPatterns.some(pattern => url.includes(pattern));
+  }
+
+  getDomainFromUrl(url) {
+    try {
+      return new URL(url).hostname;
+    } catch (error) {
+      return url;
+    }
   }
 
   async getSettings() {

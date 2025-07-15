@@ -111,6 +111,13 @@ class SlowSurfDelay {
 
   continueToWebsite() {
     if (!document.getElementById('continueButton').disabled) {
+      // Mark this tab as bypassed for this domain
+      chrome.runtime.sendMessage({
+        action: 'markTabBypassed',
+        targetUrl: this.targetUrl
+      });
+      
+      // Navigate to the target website
       window.location.href = this.targetUrl;
     }
   }
