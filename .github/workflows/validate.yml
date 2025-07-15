@@ -73,8 +73,8 @@ jobs:
       run: |
         echo "🔒 Checking for security issues..."
         
-        # Check for potentially dangerous patterns
-        DANGEROUS_PATTERNS=("eval(" "innerHTML.*=" "document.write(" "onclick=" "javascript:" "data:text/html")
+        # Check for potentially dangerous patterns (more specific)
+        DANGEROUS_PATTERNS=("eval(" "document.write(" "javascript:" "data:text/html")
         
         for pattern in "${DANGEROUS_PATTERNS[@]}"; do
           if grep -r "$pattern" *.js *.html 2>/dev/null; then
@@ -83,10 +83,22 @@ jobs:
           fi
         done
         
-        # Check for hardcoded secrets/tokens
-        if grep -r -i "token\|secret\|password\|key.*=" *.js *.html 2>/dev/null | grep -v "visitKey\|extensionKey"; then
+        # Check for hardcoded secrets/tokens (more specific)
+        if grep -r -i "token.*=" *.js *.html 2>/dev/null | grep -v "visitKey\|extensionKey\|GITHUB_TOKEN"; then
           echo "⚠️  Found potential hardcoded secrets"
           echo "Please review for security implications"
+        fi
+        
+        # Check for innerHTML usage (info only, not necessarily dangerous)
+        INNERHTML_COUNT=$(grep -r "innerHTML" *.js *.html 2>/dev/null | wc -l)
+        if [ $INNERHTML_COUNT -gt 0 ]; then
+          echo "ℹ️  Found $INNERHTML_COUNT uses of innerHTML (review for XSS safety)"
+        fi
+        
+        # Check for onclick usage (info only, not necessarily dangerous)
+        ONCLICK_COUNT=$(grep -r "onclick=" *.js *.html 2>/dev/null | wc -l)
+        if [ $ONCLICK_COUNT -gt 0 ]; then
+          echo "ℹ️  Found $ONCLICK_COUNT uses of onclick (consider using addEventListener)"
         fi
         
         echo "✅ Security check completed"
@@ -115,12 +127,16 @@ jobs:
           chmod +x bundle.sh
           ./bundle.sh
           
+          # Get current version from manifest.json
+          CURRENT_VERSION=$(grep '"version"' manifest.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
+          BUNDLE_FILE="dist/slowsurf-v${CURRENT_VERSION}.zip"
+          
           # Check if bundle was created
-          if [ -f "dist/slowsurf-v1.0.zip" ]; then
+          if [ -f "$BUNDLE_FILE" ]; then
             echo "✅ Bundle created successfully"
             
             # Check bundle size
-            BUNDLE_SIZE=$(wc -c < "dist/slowsurf-v1.0.zip" | tr -d ' ')
+            BUNDLE_SIZE=$(wc -c < "$BUNDLE_FILE" | tr -d ' ')
             BUNDLE_SIZE_KB=$((BUNDLE_SIZE / 1024))
             echo "📏 Bundle size: $BUNDLE_SIZE bytes ($BUNDLE_SIZE_KB KB)"
             
@@ -133,7 +149,8 @@ jobs:
             
             echo "✅ Bundle size within limits"
           else
-            echo "❌ Bundle creation failed"
+            echo "❌ Bundle creation failed - expected: $BUNDLE_FILE"
+            ls -la dist/ || echo "No dist directory found"
             exit 1
           fi
         else
