@@ -70,3 +70,6 @@ temp/
 *.bak
 *.tmp
 manifest.json.bak
+
+# Chrome Web Store content (private)
+chrome-store-content.md

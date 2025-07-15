@@ -1,14 +1,18 @@
 # SlowSurf - Chrome Extension
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I3I51I3E28)
+
 A Chrome extension that adds intentional delays before visiting configured websites to reduce impulsive browsing and promote mindful internet usage.
 
 ## Features
 
 - **Configurable Delays**: Set custom delay times (5s to 15:00 minutes) for specific websites
+- **Flexible Time Input**: Support for both seconds (30) and MM:SS (1:30) time formats
 - **Wildcard Support**: Use patterns like `*.reddit.com` or `facebook.com/*` to match multiple URLs
 - **Countdown Timer**: Visual countdown with progress bar on delay page
 - **Randomized Messages**: Thoughtful prompts to encourage reflection before browsing
-- **Easy Configuration**: Simple popup interface for managing websites and settings
+- **Auto-Save Settings**: Configuration saves automatically without manual intervention
+- **Compact Interface**: Clean, streamlined popup with optimized layout
 - **Session Memory**: Prevents repeated delays within the same browsing session
 
 ## Installation
@@ -31,12 +35,12 @@ The extension will be available on the Chrome Web Store once reviewed and approv
 
 1. Click the SlowSurf icon in your Chrome toolbar
 2. Configure your global settings:
-   - Default delay time (30s recommended)
    - Enable/disable the extension
 3. Add websites you want to slow down:
    - Enter the website pattern (e.g., `reddit.com`)
-   - Set a custom delay time if desired
-   - Click "Add Website"
+   - Set a custom delay time (defaults to 30 seconds if empty)
+   - Press Enter or click "Add Website"
+   - Remove entries with the "Remove" button
 
 ### Website Pattern Examples
 
@@ -78,9 +82,10 @@ slowsurf/
 
 - **Manifest V3**: Uses the latest Chrome extension APIs
 - **Service Worker**: Background script handles URL matching and redirection
-- **Content Script**: Injects delay logic on matching pages
-- **Chrome Storage**: Syncs settings across devices
-- **Session Storage**: Prevents repeated delays in the same session
+- **Content Script**: Minimal content script for URL interception
+- **Chrome Storage**: Syncs settings across devices with auto-save
+- **Per-Tab Bypass**: Prevents repeated delays in the same browsing session
+- **Event-Driven UI**: Proper event listeners for reliable button functionality
 
 ### Permissions
 
@@ -133,11 +138,13 @@ This project uses automated semantic versioning and releases. Use the provided s
 
 Test the extension with various website patterns and scenarios:
 
-1. Add test websites to your configuration
+1. Add test websites to your configuration using different time formats
 2. Navigate to those websites
-3. Verify the delay page appears
+3. Verify the delay page appears with proper time display
 4. Test the countdown timer and continue functionality
 5. Verify session memory works (no repeated delays)
+6. Test the remove button functionality
+7. Verify auto-save works by refreshing the popup
 
 ## Privacy & Security
 
