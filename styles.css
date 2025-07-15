@@ -67,7 +67,11 @@ body.popup .add-website input[type="number"] {
 }
 
 body.popup .examples {
-  display: none; /* Hide examples in popup to save space */
+  font-size: 13px; /* Smaller font in popup but still visible */
+}
+
+body.popup .examples code {
+  font-size: 12px; /* Slightly smaller code examples */
 }
 
 header h1 {
