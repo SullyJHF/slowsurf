@@ -15,11 +15,6 @@
     <section class="settings-section">
       <h2>Global Settings</h2>
       <div class="setting-group">
-        <label for="defaultDelay">Default Delay:</label>
-        <input type="text" id="defaultDelay" placeholder="30" value="30">
-        <small>Format: seconds (30) or MM:SS (1:30). Range: 5s - 15:00</small>
-      </div>
-      <div class="setting-group">
         <label for="enableExtension">
           <input type="checkbox" id="enableExtension" checked>
           Enable SlowSurf
@@ -31,9 +26,10 @@
       <h2>Websites</h2>
       <div class="add-website">
         <input type="text" id="websiteInput" placeholder="Enter website (e.g., reddit.com, *.facebook.com)">
-        <input type="text" id="websiteDelay" placeholder="30" value="30">
+        <input type="text" id="websiteDelay" placeholder="30" value="">
         <button id="addWebsite">Add Website</button>
       </div>
+      <small class="delay-hint">Delay format: seconds (30) or MM:SS (1:30). Range: 5s - 15:00</small>
       
       <div class="website-list" id="websiteList">
         <!-- Dynamic content will be added here -->

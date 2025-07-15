@@ -71,14 +71,12 @@ class SlowSurfOptions {
   async loadSettings() {
     const result = await chrome.storage.sync.get({
       enabled: true,
-      defaultDelay: 30,
       websites: []
     });
     
     this.settings = result;
     
     document.getElementById('enableExtension').checked = this.settings.enabled;
-    document.getElementById('defaultDelay').value = this.secondsToInputString(this.settings.defaultDelay);
   }
 
   // For input fields, show clean format without 's' for seconds
@@ -96,12 +94,13 @@ class SlowSurfOptions {
     document.getElementById('websiteInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.addWebsite();
     });
+    document.getElementById('websiteDelay').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') this.addWebsite();
+    });
     document.getElementById('resetSettings').addEventListener('click', () => this.resetSettings());
     
     // Auto-save on settings changes
     document.getElementById('enableExtension').addEventListener('change', () => this.autoSave());
-    document.getElementById('defaultDelay').addEventListener('change', () => this.autoSave());
-    document.getElementById('defaultDelay').addEventListener('input', () => this.debouncedAutoSave());
   }
 
   addWebsite() {
@@ -116,12 +115,16 @@ class SlowSurfOptions {
       return;
     }
 
-    if (!this.validateTimeInput(delayTimeString)) {
+    // Use default delay of 30 seconds if no delay is specified
+    const delay = delayTimeString ? 
+      (this.validateTimeInput(delayTimeString) ? 
+        this.timeStringToSeconds(delayTimeString) : 
+        null) : 30;
+
+    if (delay === null) {
       alert('Please enter a valid time format: seconds (e.g., 30) or MM:SS (e.g., 1:30) between 5s and 15:00');
       return;
     }
-
-    const delay = this.timeStringToSeconds(delayTimeString);
 
     if (this.settings.websites.find(w => w.pattern === website)) {
       alert('This website is already in the list');
@@ -135,7 +138,7 @@ class SlowSurfOptions {
     });
 
     websiteInput.value = '';
-    delayInput.value = this.secondsToInputString(this.settings.defaultDelay);
+    delayInput.value = '';
     
     this.renderWebsiteList();
     this.autoSave();
@@ -179,11 +182,6 @@ class SlowSurfOptions {
 
   async autoSave() {
     this.settings.enabled = document.getElementById('enableExtension').checked;
-    
-    const defaultDelayTimeString = document.getElementById('defaultDelay').value;
-    if (this.validateTimeInput(defaultDelayTimeString)) {
-      this.settings.defaultDelay = this.timeStringToSeconds(defaultDelayTimeString);
-    }
     
     await chrome.storage.sync.set(this.settings);
     
@@ -242,7 +240,6 @@ class SlowSurfOptions {
     if (confirm('Are you sure you want to reset all settings to defaults?')) {
       this.settings = {
         enabled: true,
-        defaultDelay: 30,
         websites: []
       };
       
@@ -250,8 +247,8 @@ class SlowSurfOptions {
       await this.loadSettings();
       this.renderWebsiteList();
       
-      // Reset the website delay input to default
-      document.getElementById('websiteDelay').value = this.secondsToInputString(this.settings.defaultDelay);
+      // Clear the website delay input
+      document.getElementById('websiteDelay').value = '';
     }
   }
 }
