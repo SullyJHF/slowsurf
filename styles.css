@@ -200,11 +200,6 @@ header p {
   border-left: 4px solid #27ae60;
 }
 
-.website-item.disabled {
-  border-left: 4px solid #e74c3c;
-  opacity: 0.6;
-}
-
 .website-info {
   flex: 1;
   display: flex;
@@ -235,25 +230,13 @@ header p {
   flex-shrink: 0;
 }
 
-.toggle-btn, .remove-btn {
+.remove-btn {
   padding: 5px 10px;
   border: none;
   border-radius: 3px;
   cursor: pointer;
   font-size: 12px;
   transition: background-color 0.3s;
-}
-
-.toggle-btn {
-  background-color: #f39c12;
-  color: white;
-}
-
-.toggle-btn:hover {
-  background-color: #e67e22;
-}
-
-.remove-btn {
   background-color: #e74c3c;
   color: white;
 }

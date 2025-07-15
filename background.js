@@ -104,7 +104,6 @@ class SlowSurfBackground {
   async getSettings() {
     const result = await chrome.storage.sync.get({
       enabled: true,
-      defaultDelay: 30,
       websites: []
     });
     return result;
@@ -117,8 +116,6 @@ class SlowSurfBackground {
       const fullUrl = url;
 
       return websites.find(website => {
-        if (!website.enabled) return false;
-        
         return this.matchesPattern(hostname, fullUrl, website.pattern);
       });
     } catch (error) {

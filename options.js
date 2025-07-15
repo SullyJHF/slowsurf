@@ -133,8 +133,7 @@ class SlowSurfOptions {
 
     this.settings.websites.push({
       pattern: website,
-      delay: delay,
-      enabled: true
+      delay: delay
     });
 
     websiteInput.value = '';
@@ -150,12 +149,6 @@ class SlowSurfOptions {
     this.autoSave();
   }
 
-  toggleWebsite(index) {
-    this.settings.websites[index].enabled = !this.settings.websites[index].enabled;
-    this.renderWebsiteList();
-    this.autoSave();
-  }
-
   renderWebsiteList() {
     const listContainer = document.getElementById('websiteList');
     
@@ -165,19 +158,25 @@ class SlowSurfOptions {
     }
 
     listContainer.innerHTML = this.settings.websites.map((website, index) => `
-      <div class="website-item ${website.enabled ? 'enabled' : 'disabled'}">
+      <div class="website-item enabled">
         <div class="website-info">
           <span class="website-pattern">${website.pattern}</span>
           <span class="website-delay">${this.secondsToTimeString(website.delay)} delay</span>
         </div>
         <div class="website-actions">
-          <button class="toggle-btn" onclick="options.toggleWebsite(${index})">
-            ${website.enabled ? 'Disable' : 'Enable'}
-          </button>
-          <button class="remove-btn" onclick="options.removeWebsite(${index})">Remove</button>
+          <button class="remove-btn" data-index="${index}">Remove</button>
         </div>
       </div>
     `).join('');
+
+    // Add event listeners to remove buttons
+    const removeButtons = listContainer.querySelectorAll('.remove-btn');
+    removeButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.index);
+        this.removeWebsite(index);
+      });
+    });
   }
 
   async autoSave() {
