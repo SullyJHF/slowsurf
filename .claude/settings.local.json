@@ -12,7 +12,8 @@
       "Bash(./bundle.sh)",
       "Bash(git push:*)",
       "Bash(./tag.sh:*)",
-      "Bash(convert:*)"
+      "Bash(convert:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

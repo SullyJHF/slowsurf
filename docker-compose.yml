@@ -2,25 +2,33 @@ version: '3.8'
 
 services:
   slowsurf-web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: slowsurf-web
     restart: unless-stopped
-    ports:
-      - "8080:80"
-    environment:
-      - NGINX_HOST=slowsurf.solvy.dev
-      - NGINX_PORT=80
+    networks:
+      - traefik
     labels:
+      # Enable Traefik
       - "traefik.enable=true"
+      
+      # Router configuration
       - "traefik.http.routers.slowsurf.rule=Host(`slowsurf.solvy.dev`)"
       - "traefik.http.routers.slowsurf.entrypoints=websecure"
+      - "traefik.http.routers.slowsurf.tls=true"
       - "traefik.http.routers.slowsurf.tls.certresolver=myresolver"
+      
+      # Service configuration
       - "traefik.http.services.slowsurf.loadbalancer.server.port=80"
-    networks:
-      - web
+      
+      # HTTP to HTTPS redirect
+      - "traefik.http.routers.slowsurf-http.rule=Host(`slowsurf.solvy.dev`)"
+      - "traefik.http.routers.slowsurf-http.entrypoints=web"
+      - "traefik.http.routers.slowsurf-http.middlewares=redirect-to-https"
+      
+      # Middleware for HTTPS redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
 
 networks:
-  web:
+  traefik:
     external: true

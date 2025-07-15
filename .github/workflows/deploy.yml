@@ -19,9 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
     - name: Setup SSH key
       uses: webfactory/ssh-agent@v0.7.0
       with:
@@ -33,12 +30,10 @@ jobs:
         
     - name: Deploy to server
       run: |
-        # Copy files to server
-        scp -r . ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/slowsurf/
-        
-        # Run deployment script on server
+        # SSH to server, navigate to directory, pull latest code, and deploy
         ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
           cd ~/slowsurf
+          git pull origin main
           ./deploy.sh
         EOF
         

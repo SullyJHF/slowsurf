@@ -67,6 +67,32 @@ Pushes to main branch automatically deploy via GitHub Actions when these files c
 ## Server Requirements
 
 - Docker and Docker Compose installed
-- Traefik reverse proxy running
+- Traefik reverse proxy running with a network named `traefik`
+- DNS A record pointing `slowsurf.solvy.dev` to your server
 - SSL certificates managed by Traefik/Let's Encrypt
-- External `web` network for Traefik communication
+- External `traefik` network for Traefik communication
+
+## Initial Server Setup
+
+1. Clone the repository on the server:
+   ```bash
+   git clone https://github.com/SullyJHF/slowsurf.git ~/slowsurf
+   cd ~/slowsurf
+   ```
+
+2. Make the deploy script executable:
+   ```bash
+   chmod +x deploy.sh
+   ```
+
+3. Run the initial deployment:
+   ```bash
+   ./deploy.sh
+   ```
+
+## Traefik Configuration
+
+This setup assumes:
+- Traefik is configured with entrypoints `web` (80) and `websecure` (443)
+- Let's Encrypt resolver named `myresolver` is configured
+- External Docker network named `traefik` exists
