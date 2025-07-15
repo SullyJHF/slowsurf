@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SlowSurf Settings</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>SlowSurf Settings</h1>
+      <p>Configure websites that should have a delay before opening</p>
+    </header>
+
+    <section class="settings-section">
+      <h2>Global Settings</h2>
+      <div class="setting-group">
+        <label for="defaultDelay">Default Delay (seconds):</label>
+        <input type="number" id="defaultDelay" min="5" max="60" value="10">
+      </div>
+      <div class="setting-group">
+        <label for="enableExtension">
+          <input type="checkbox" id="enableExtension" checked>
+          Enable SlowSurf
+        </label>
+      </div>
+    </section>
+
+    <section class="settings-section">
+      <h2>Websites</h2>
+      <div class="add-website">
+        <input type="text" id="websiteInput" placeholder="Enter website (e.g., reddit.com, *.facebook.com)">
+        <input type="number" id="websiteDelay" min="5" max="60" value="10" placeholder="Delay">
+        <button id="addWebsite">Add Website</button>
+      </div>
+      
+      <div class="website-list" id="websiteList">
+        <!-- Dynamic content will be added here -->
+      </div>
+    </section>
+
+    <section class="settings-section">
+      <h2>Examples</h2>
+      <ul class="examples">
+        <li><code>reddit.com</code> - Exact domain match</li>
+        <li><code>*.reddit.com</code> - All subdomains of reddit.com</li>
+        <li><code>facebook.com/*</code> - All pages on facebook.com</li>
+        <li><code>*.social-media.com</code> - All subdomains</li>
+      </ul>
+    </section>
+
+    <footer>
+      <button id="saveSettings" class="primary">Save Settings</button>
+      <button id="resetSettings">Reset to Defaults</button>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

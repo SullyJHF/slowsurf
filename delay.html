@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SlowSurf - Think Before You Browse</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="delay-page">
+  <div class="delay-container">
+    <header class="delay-header">
+      <h1>SlowSurf</h1>
+      <p>Take a moment to think before you browse</p>
+    </header>
+
+    <main class="delay-content">
+      <div class="countdown-section">
+        <div class="countdown-circle">
+          <div class="countdown-number" id="countdownNumber">10</div>
+          <div class="countdown-label">seconds</div>
+        </div>
+        <div class="countdown-progress" id="countdownProgress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+
+      <div class="message-section">
+        <div class="target-website">
+          <span class="label">You're about to visit:</span>
+          <span class="website-url" id="targetWebsite">example.com</span>
+        </div>
+        
+        <div class="discouraging-message" id="discouragingMessage">
+          <p>Is this really how you want to spend your time?</p>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <button id="continueButton" class="continue-btn" disabled>
+          <span class="btn-text">Continue to site</span>
+          <span class="btn-countdown" id="btnCountdown">(10)</span>
+        </button>
+        
+        <button id="cancelButton" class="cancel-btn">
+          Choose a different activity
+        </button>
+      </div>
+    </main>
+
+    <footer class="delay-footer">
+      <p>This delay was configured in SlowSurf to help reduce impulsive browsing</p>
+      <a href="#" id="settingsLink">Change settings</a>
+    </footer>
+  </div>
+
+  <script src="delay.js"></script>
+</body>
+</html>
