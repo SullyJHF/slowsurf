@@ -56,9 +56,12 @@ sleep 5
 if docker_compose ps | grep -q "Up"; then
     echo "✅ Container is running successfully!"
     
+    # Get container IP for internal testing
+    CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' slowsurf-web)
+    
     # Test the health endpoint
     echo "🔍 Testing health endpoint..."
-    if curl -f http://localhost:8080/health > /dev/null 2>&1; then
+    if curl -f http://$CONTAINER_IP:80/health > /dev/null 2>&1; then
         echo "✅ Health check passed!"
     else
         echo "⚠️  Health check failed, but container is running"
@@ -66,7 +69,7 @@ if docker_compose ps | grep -q "Up"; then
     
     # Test the privacy policy endpoint
     echo "🔍 Testing privacy policy endpoint..."
-    if curl -f http://localhost:8080/privacy > /dev/null 2>&1; then
+    if curl -f http://$CONTAINER_IP:80/privacy > /dev/null 2>&1; then
         echo "✅ Privacy policy endpoint is accessible!"
     else
         echo "❌ Privacy policy endpoint is not accessible"
@@ -75,7 +78,7 @@ if docker_compose ps | grep -q "Up"; then
     
     # Test root redirect
     echo "🔍 Testing root redirect..."
-    if curl -I http://localhost:8080/ 2>/dev/null | grep -q "301"; then
+    if curl -I http://$CONTAINER_IP:80/ 2>/dev/null | grep -q "301"; then
         echo "✅ Root redirect is working!"
     else
         echo "⚠️  Root redirect may not be working as expected"
