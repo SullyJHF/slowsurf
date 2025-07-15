@@ -1,8 +1,11 @@
-# SlowSurf - Chrome Extension
+# SlowSurf
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I3I51I3E28)
 
 A Chrome extension that adds intentional delays before visiting configured websites to reduce impulsive browsing and promote mindful internet usage.
+
+🌐 **Website**: [slowsurf.solvy.dev](https://slowsurf.solvy.dev)  
+📖 **Privacy Policy**: [slowsurf.solvy.dev/privacy](https://slowsurf.solvy.dev/privacy)
 
 ## Features
 
@@ -57,7 +60,7 @@ The extension will be available on the Chrome Web Store once reviewed and approv
 4. After the countdown ends, you can choose to continue or go elsewhere
 5. If you continue, you can browse normally until you close the tab
 
-## File Structure
+## Repository Structure
 
 ```
 slowsurf/
@@ -73,6 +76,20 @@ slowsurf/
 │   ├── icon16.png
 │   ├── icon48.png
 │   └── icon128.png
+├── website/             # Website hosting (slowsurf.solvy.dev)
+│   ├── index.html          # Homepage with Ko-fi widget
+│   ├── PRIVACY_POLICY.html # Privacy policy page
+│   ├── 404.html           # 404 error page
+│   ├── favicon.ico        # Favicon (converted from extension icons)
+│   ├── nginx.conf         # Nginx configuration
+│   ├── Dockerfile         # Docker image for website
+│   ├── docker-compose.yml # Production deployment
+│   ├── docker-compose.local.yml # Local development
+│   └── deploy.sh          # Deployment script
+├── .github/workflows/   # GitHub Actions CI/CD
+│   └── deploy.yml         # Auto-deploy website changes
+├── bundle.sh            # Create extension bundle for Chrome Web Store
+├── tag.sh               # Automated versioning and release script
 └── README.md            # This file
 ```
 
@@ -123,10 +140,11 @@ This project uses automated semantic versioning and releases. Use the provided s
 
 **What the script does:**
 1. Updates the version in `manifest.json`
-2. Commits the change with message "Version vX.X.X"
-3. Creates a git tag `vX.X.X`
-4. Pushes to GitHub
-5. Triggers GitHub Actions to build and create a release
+2. Creates extension bundle automatically
+3. Commits the change with message "Version vX.X.X"
+4. Creates a git tag `vX.X.X`
+5. Pushes to GitHub
+6. Triggers GitHub Actions to build and create a release
 
 **Manual Bundle Creation:**
 ```bash
@@ -134,8 +152,32 @@ This project uses automated semantic versioning and releases. Use the provided s
 ./bundle.sh
 ```
 
+### Website Development
+
+The website is hosted at [slowsurf.solvy.dev](https://slowsurf.solvy.dev) and automatically deploys when changes are pushed to the `website/` directory.
+
+**Local Development:**
+```bash
+cd website
+./deploy.sh local
+# Website available at http://localhost:8080
+```
+
+**Production Deployment:**
+- Automatic via GitHub Actions when pushing to main branch
+- Manual deployment: `cd website && ./deploy.sh`
+- Requires server access and Docker setup
+
+**Website Features:**
+- Responsive design with purple gradient matching extension
+- Ko-fi widget for donations
+- Automatic favicon from extension icons
+- Privacy policy hosting
+- Health check endpoints for monitoring
+
 ### Testing
 
+**Extension Testing:**
 Test the extension with various website patterns and scenarios:
 
 1. Add test websites to your configuration using different time formats
@@ -145,6 +187,16 @@ Test the extension with various website patterns and scenarios:
 5. Verify session memory works (no repeated delays)
 6. Test the remove button functionality
 7. Verify auto-save works by refreshing the popup
+
+**Website Testing:**
+Test the website locally before deployment:
+
+1. Run `cd website && ./deploy.sh local`
+2. Visit http://localhost:8080 and verify homepage loads
+3. Test privacy policy at http://localhost:8080/privacy
+4. Verify favicon appears in browser tab
+5. Test responsive design on different screen sizes
+6. Verify Ko-fi widget functionality
 
 ## Privacy & Security
 
