@@ -51,7 +51,7 @@ if [ ! -f "$COMPOSE_FILE" ]; then
 fi
 
 # Check if required files exist
-REQUIRED_FILES=("PRIVACY_POLICY.html" "index.html" "404.html" "nginx.conf" "Dockerfile")
+REQUIRED_FILES=("PRIVACY_POLICY.html" "index.html" "404.html" "nginx.conf" "Dockerfile" "favicon.ico")
 for file in "${REQUIRED_FILES[@]}"; do
     if [ ! -f "$file" ]; then
         echo "❌ Error: Required file $file not found"

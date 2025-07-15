@@ -11,6 +11,7 @@ on:
       - 'website/Dockerfile'
       - 'website/docker-compose.yml'
       - 'website/deploy.sh'
+      - 'website/favicon.ico'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
