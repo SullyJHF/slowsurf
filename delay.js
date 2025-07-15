@@ -3,6 +3,16 @@ class SlowSurfDelay {
     this.init();
   }
 
+  // Utility function to format seconds as MM:SS or seconds
+  formatTime(seconds) {
+    if (seconds < 60) {
+      return `${seconds}s`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
   init() {
     this.parseUrlParams();
     this.setupDiscouragingMessages();
@@ -17,8 +27,8 @@ class SlowSurfDelay {
     this.pattern = decodeURIComponent(urlParams.get('pattern') || '');
 
     document.getElementById('targetWebsite').textContent = this.extractDomain(this.targetUrl);
-    document.getElementById('countdownNumber').textContent = this.delaySeconds;
-    document.getElementById('btnCountdown').textContent = `(${this.delaySeconds})`;
+    document.getElementById('countdownNumber').textContent = this.formatTime(this.delaySeconds);
+    document.getElementById('btnCountdown').textContent = `(${this.formatTime(this.delaySeconds)})`;
   }
 
   extractDomain(url) {
@@ -81,8 +91,8 @@ class SlowSurfDelay {
     this.countdownInterval = setInterval(() => {
       this.remainingSeconds--;
       
-      document.getElementById('countdownNumber').textContent = this.remainingSeconds;
-      document.getElementById('btnCountdown').textContent = `(${this.remainingSeconds})`;
+      document.getElementById('countdownNumber').textContent = this.formatTime(this.remainingSeconds);
+      document.getElementById('btnCountdown').textContent = `(${this.formatTime(this.remainingSeconds)})`;
       
       const progressPercentage = ((this.delaySeconds - this.remainingSeconds) / this.delaySeconds) * 100;
       document.getElementById('progressBar').style.width = `${progressPercentage}%`;
@@ -103,7 +113,7 @@ class SlowSurfDelay {
     continueBtn.classList.add('enabled');
     btnCountdown.style.display = 'none';
     
-    document.getElementById('countdownNumber').textContent = '0';
+    document.getElementById('countdownNumber').textContent = '0s';
     document.getElementById('progressBar').style.width = '100%';
     
     continueBtn.focus();

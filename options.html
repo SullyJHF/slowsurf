@@ -15,8 +15,9 @@
     <section class="settings-section">
       <h2>Global Settings</h2>
       <div class="setting-group">
-        <label for="defaultDelay">Default Delay (seconds):</label>
-        <input type="number" id="defaultDelay" min="5" max="60" value="30">
+        <label for="defaultDelay">Default Delay:</label>
+        <input type="text" id="defaultDelay" placeholder="30s" value="30s">
+        <small>Format: seconds (30s) or MM:SS (1:30). Range: 5s - 15:00</small>
       </div>
       <div class="setting-group">
         <label for="enableExtension">
@@ -30,7 +31,7 @@
       <h2>Websites</h2>
       <div class="add-website">
         <input type="text" id="websiteInput" placeholder="Enter website (e.g., reddit.com, *.facebook.com)">
-        <input type="number" id="websiteDelay" min="5" max="60" value="30" placeholder="Delay">
+        <input type="text" id="websiteDelay" placeholder="30s" value="30s">
         <button id="addWebsite">Add Website</button>
       </div>
       

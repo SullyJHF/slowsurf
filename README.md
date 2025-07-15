@@ -4,7 +4,7 @@ A Chrome extension that adds intentional delays before visiting configured websi
 
 ## Features
 
-- **Configurable Delays**: Set custom delay times (5-60 seconds) for specific websites
+- **Configurable Delays**: Set custom delay times (5s to 15:00 minutes) for specific websites
 - **Wildcard Support**: Use patterns like `*.reddit.com` or `facebook.com/*` to match multiple URLs
 - **Countdown Timer**: Visual countdown with progress bar on delay page
 - **Randomized Messages**: Thoughtful prompts to encourage reflection before browsing
@@ -31,7 +31,7 @@ The extension will be available on the Chrome Web Store once reviewed and approv
 
 1. Click the SlowSurf icon in your Chrome toolbar
 2. Configure your global settings:
-   - Default delay time (30 seconds recommended)
+   - Default delay time (30s recommended)
    - Enable/disable the extension
 3. Add websites you want to slow down:
    - Enter the website pattern (e.g., `reddit.com`)

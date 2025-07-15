@@ -124,6 +124,14 @@ header p {
   margin-right: 8px;
 }
 
+.setting-group small {
+  display: block;
+  color: #7f8c8d;
+  font-size: 11px;
+  margin-top: 4px;
+  font-style: italic;
+}
+
 .add-website {
   display: flex;
   gap: 10px;

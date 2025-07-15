@@ -3,6 +3,57 @@ class SlowSurfOptions {
     this.init();
   }
 
+  // Utility functions for time conversion
+  secondsToTimeString(seconds) {
+    if (seconds < 60) {
+      return `${seconds}s`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
+  timeStringToSeconds(timeString) {
+    if (!timeString) return 30; // Default fallback
+    
+    // Handle seconds format (e.g., "30s" or just "30")
+    if (/^\d+s?$/.test(timeString)) {
+      const num = parseInt(timeString.replace('s', ''));
+      return Math.min(Math.max(num, 5), 900); // Min 5s, Max 15min
+    }
+    
+    // Handle MM:SS format
+    const parts = timeString.split(':');
+    if (parts.length !== 2) return 30;
+    
+    const minutes = parseInt(parts[0]) || 0;
+    const seconds = parseInt(parts[1]) || 0;
+    
+    const totalSeconds = (minutes * 60) + seconds;
+    return Math.min(Math.max(totalSeconds, 5), 900); // Min 5s, Max 15min
+  }
+
+  validateTimeInput(timeString) {
+    if (!timeString) return false;
+    
+    // Allow seconds format (e.g., "30s" or just "30")
+    if (/^\d+s?$/.test(timeString)) {
+      const num = parseInt(timeString.replace('s', ''));
+      return num >= 5 && num <= 900;
+    }
+    
+    // Validate MM:SS format
+    const timeRegex = /^(\d{1,2}):([0-5]\d)$/;
+    const match = timeString.match(timeRegex);
+    
+    if (!match) return false;
+    
+    const minutes = parseInt(match[1]);
+    const seconds = parseInt(match[2]);
+    
+    return minutes <= 15 && (minutes > 0 || seconds >= 5);
+  }
+
   async init() {
     this.detectPopupMode();
     await this.loadSettings();
@@ -27,7 +78,7 @@ class SlowSurfOptions {
     this.settings = result;
     
     document.getElementById('enableExtension').checked = this.settings.enabled;
-    document.getElementById('defaultDelay').value = this.settings.defaultDelay;
+    document.getElementById('defaultDelay').value = this.secondsToTimeString(this.settings.defaultDelay);
   }
 
   bindEvents() {
@@ -48,12 +99,19 @@ class SlowSurfOptions {
     const delayInput = document.getElementById('websiteDelay');
     
     const website = websiteInput.value.trim();
-    const delay = parseInt(delayInput.value) || this.settings.defaultDelay;
+    const delayTimeString = delayInput.value.trim();
     
     if (!website) {
       alert('Please enter a website URL');
       return;
     }
+
+    if (!this.validateTimeInput(delayTimeString)) {
+      alert('Please enter a valid time format: seconds (e.g., 30s) or MM:SS (e.g., 1:30) between 5s and 15:00');
+      return;
+    }
+
+    const delay = this.timeStringToSeconds(delayTimeString);
 
     if (this.settings.websites.find(w => w.pattern === website)) {
       alert('This website is already in the list');
@@ -67,7 +125,7 @@ class SlowSurfOptions {
     });
 
     websiteInput.value = '';
-    delayInput.value = this.settings.defaultDelay;
+    delayInput.value = this.secondsToTimeString(this.settings.defaultDelay);
     
     this.renderWebsiteList();
     this.autoSave();
@@ -97,7 +155,7 @@ class SlowSurfOptions {
       <div class="website-item ${website.enabled ? 'enabled' : 'disabled'}">
         <div class="website-info">
           <span class="website-pattern">${website.pattern}</span>
-          <span class="website-delay">${website.delay}s delay</span>
+          <span class="website-delay">${this.secondsToTimeString(website.delay)} delay</span>
         </div>
         <div class="website-actions">
           <button class="toggle-btn" onclick="options.toggleWebsite(${index})">
@@ -111,7 +169,11 @@ class SlowSurfOptions {
 
   async autoSave() {
     this.settings.enabled = document.getElementById('enableExtension').checked;
-    this.settings.defaultDelay = parseInt(document.getElementById('defaultDelay').value);
+    
+    const defaultDelayTimeString = document.getElementById('defaultDelay').value;
+    if (this.validateTimeInput(defaultDelayTimeString)) {
+      this.settings.defaultDelay = this.timeStringToSeconds(defaultDelayTimeString);
+    }
     
     await chrome.storage.sync.set(this.settings);
     
@@ -177,6 +239,9 @@ class SlowSurfOptions {
       await chrome.storage.sync.set(this.settings);
       await this.loadSettings();
       this.renderWebsiteList();
+      
+      // Reset the website delay input to default
+      document.getElementById('websiteDelay').value = this.secondsToTimeString(this.settings.defaultDelay);
     }
   }
 }
