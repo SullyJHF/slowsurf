@@ -10,7 +10,8 @@
       "Bash(magick identify:*)",
       "Bash(magick:*)",
       "Bash(./bundle.sh)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(./tag.sh:*)"
     ],
     "deny": []
   }

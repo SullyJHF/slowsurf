@@ -8,6 +8,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     
     steps:
     - name: Checkout code
@@ -115,9 +118,9 @@ jobs:
       run: |
         echo "🔍 Generating changelog..."
         
-        # Get the previous tag
-        PREVIOUS_TAG=$(git tag --sort=-version:refname | head -n 2 | tail -n 1)
+        # Get the previous tag (excluding current tag)
         CURRENT_TAG="${{ steps.get_version.outputs.version }}"
+        PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -v "^$CURRENT_TAG$" | head -n 1)
         
         echo "Current tag: $CURRENT_TAG"
         echo "Previous tag: $PREVIOUS_TAG"
