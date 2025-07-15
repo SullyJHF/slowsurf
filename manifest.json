@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SlowSurf",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "Add intentional delays before visiting configured websites to reduce impulsive browsing",
   
   "permissions": [
