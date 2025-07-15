@@ -35,8 +35,12 @@ class SlowSurfOptions {
     document.getElementById('websiteInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.addWebsite();
     });
-    document.getElementById('saveSettings').addEventListener('click', () => this.saveSettings());
     document.getElementById('resetSettings').addEventListener('click', () => this.resetSettings());
+    
+    // Auto-save on settings changes
+    document.getElementById('enableExtension').addEventListener('change', () => this.autoSave());
+    document.getElementById('defaultDelay').addEventListener('change', () => this.autoSave());
+    document.getElementById('defaultDelay').addEventListener('input', () => this.debouncedAutoSave());
   }
 
   addWebsite() {
@@ -66,16 +70,19 @@ class SlowSurfOptions {
     delayInput.value = this.settings.defaultDelay;
     
     this.renderWebsiteList();
+    this.autoSave();
   }
 
   removeWebsite(index) {
     this.settings.websites.splice(index, 1);
     this.renderWebsiteList();
+    this.autoSave();
   }
 
   toggleWebsite(index) {
     this.settings.websites[index].enabled = !this.settings.websites[index].enabled;
     this.renderWebsiteList();
+    this.autoSave();
   }
 
   renderWebsiteList() {
@@ -102,21 +109,61 @@ class SlowSurfOptions {
     `).join('');
   }
 
-  async saveSettings() {
+  async autoSave() {
     this.settings.enabled = document.getElementById('enableExtension').checked;
     this.settings.defaultDelay = parseInt(document.getElementById('defaultDelay').value);
     
     await chrome.storage.sync.set(this.settings);
     
-    const saveBtn = document.getElementById('saveSettings');
-    const originalText = saveBtn.textContent;
-    saveBtn.textContent = 'Saved!';
-    saveBtn.style.backgroundColor = '#4CAF50';
+    // Show brief save indicator
+    this.showSaveIndicator();
+  }
+
+  debouncedAutoSave() {
+    // Clear existing timeout
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
     
+    // Set new timeout for 500ms after user stops typing
+    this.saveTimeout = setTimeout(() => {
+      this.autoSave();
+    }, 500);
+  }
+
+  showSaveIndicator() {
+    // Create or update save indicator
+    let indicator = document.getElementById('autoSaveIndicator');
+    if (!indicator) {
+      indicator = document.createElement('div');
+      indicator.id = 'autoSaveIndicator';
+      indicator.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: #4CAF50;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s;
+      `;
+      indicator.textContent = 'Saved ✓';
+      document.body.appendChild(indicator);
+    }
+    
+    // Show and hide the indicator
+    indicator.style.opacity = '1';
     setTimeout(() => {
-      saveBtn.textContent = originalText;
-      saveBtn.style.backgroundColor = '';
-    }, 1000);
+      indicator.style.opacity = '0';
+    }, 1500);
+  }
+
+  async saveSettings() {
+    // Keep this method for backward compatibility and explicit saves
+    await this.autoSave();
   }
 
   async resetSettings() {
