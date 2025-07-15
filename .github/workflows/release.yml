@@ -1,0 +1,221 @@
+name: Release Chrome Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for changelog generation
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Get version from tag
+      id: get_version
+      run: |
+        VERSION="${{ github.ref_name }}"
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        
+        # Extract version number without 'v' prefix
+        VERSION_NUMBER=$(echo $VERSION | sed 's/^v//')
+        echo "version_number=$VERSION_NUMBER" >> $GITHUB_OUTPUT
+    
+    - name: Validate manifest version
+      run: |
+        MANIFEST_VERSION=$(grep '"version"' manifest.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
+        if [ "$MANIFEST_VERSION" != "${{ steps.get_version.outputs.version_number }}" ]; then
+          echo "❌ Version mismatch!"
+          echo "Manifest version: $MANIFEST_VERSION"
+          echo "Tag version: ${{ steps.get_version.outputs.version_number }}"
+          echo "Please update manifest.json version to match the tag"
+          exit 1
+        fi
+        echo "✅ Version validation passed: $MANIFEST_VERSION"
+    
+    - name: Validate extension files
+      run: |
+        echo "🔍 Validating required files..."
+        
+        REQUIRED_FILES=("manifest.json" "background.js" "content.js" "delay.html" "delay.js" "options.html" "options.js" "styles.css")
+        
+        for file in "${REQUIRED_FILES[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          fi
+          echo "✅ Found: $file"
+        done
+        
+        # Validate manifest.json syntax
+        if ! python3 -m json.tool manifest.json > /dev/null 2>&1; then
+          echo "❌ Invalid JSON in manifest.json"
+          exit 1
+        fi
+        
+        echo "✅ All files validated"
+    
+    - name: Create extension bundle
+      run: |
+        echo "📦 Creating extension bundle..."
+        
+        # Create dist directory
+        mkdir -p dist
+        
+        # Get version for bundle name
+        VERSION_NUMBER="${{ steps.get_version.outputs.version_number }}"
+        BUNDLE_NAME="slowsurf-v${VERSION_NUMBER}.zip"
+        
+        # Create the bundle
+        zip -r "dist/$BUNDLE_NAME" \
+          manifest.json \
+          background.js \
+          content.js \
+          delay.html \
+          delay.js \
+          options.html \
+          options.js \
+          styles.css \
+          icons/icon16.png \
+          icons/icon48.png \
+          icons/icon128.png \
+          -x "*.DS_Store" "*.git*" "node_modules/*" "dist/*"
+        
+        # Get bundle size
+        BUNDLE_SIZE=$(wc -c < "dist/$BUNDLE_NAME" | tr -d ' ')
+        BUNDLE_SIZE_KB=$((BUNDLE_SIZE / 1024))
+        
+        echo "✅ Bundle created: $BUNDLE_NAME"
+        echo "📏 Size: $BUNDLE_SIZE bytes ($BUNDLE_SIZE_KB KB)"
+        
+        # Check Chrome Web Store size limit (10MB)
+        MAX_SIZE=$((10 * 1024 * 1024))
+        if [ $BUNDLE_SIZE -gt $MAX_SIZE ]; then
+          echo "❌ Bundle size exceeds Chrome Web Store limit (10MB)"
+          exit 1
+        fi
+        
+        # Set outputs for next step
+        echo "bundle_name=$BUNDLE_NAME" >> $GITHUB_OUTPUT
+        echo "bundle_size=$BUNDLE_SIZE" >> $GITHUB_OUTPUT
+        echo "bundle_size_kb=$BUNDLE_SIZE_KB" >> $GITHUB_OUTPUT
+      id: bundle
+    
+    - name: Generate changelog
+      id: changelog
+      run: |
+        echo "🔍 Generating changelog..."
+        
+        # Get the previous tag
+        PREVIOUS_TAG=$(git tag --sort=-version:refname | head -n 2 | tail -n 1)
+        CURRENT_TAG="${{ steps.get_version.outputs.version }}"
+        
+        echo "Current tag: $CURRENT_TAG"
+        echo "Previous tag: $PREVIOUS_TAG"
+        
+        # If no previous tag, use all commits
+        if [ -z "$PREVIOUS_TAG" ]; then
+          echo "No previous tag found, using all commits"
+          CHANGELOG=$(git log --oneline --pretty=format:"- %s" | head -20)
+        else
+          echo "Generating changelog since $PREVIOUS_TAG"
+          CHANGELOG=$(git log --oneline --pretty=format:"- %s" "$PREVIOUS_TAG..$CURRENT_TAG")
+        fi
+        
+        # Save changelog to file
+        echo "$CHANGELOG" > changelog.txt
+        
+        # Set output for use in release notes
+        echo "changelog<<EOF" >> $GITHUB_OUTPUT
+        echo "$CHANGELOG" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+        echo "✅ Changelog generated"
+    
+    - name: Generate release notes
+      run: |
+        cat > release_notes.md << 'EOF'
+        # SlowSurf Chrome Extension v${{ steps.get_version.outputs.version_number }}
+        
+        ## 🔧 What's New
+        
+        ${{ steps.changelog.outputs.changelog }}
+        
+        ## 📦 Installation
+        
+        ### Chrome Web Store (Recommended)
+        - Coming soon! Extension is currently under review.
+        
+        ### Manual Installation
+        1. Download the `${{ steps.bundle.outputs.bundle_name }}` file below
+        2. Extract the ZIP file
+        3. Open Chrome and go to `chrome://extensions/`
+        4. Enable "Developer mode" in the top right
+        5. Click "Load unpacked" and select the extracted folder
+        
+        ## 📋 Features
+        
+        - ⏱️ Configurable delays (5-60 seconds)
+        - 🎯 Wildcard pattern matching (`*.reddit.com`, `facebook.com/*`)
+        - 🎭 Randomized discouraging messages
+        - 💾 Settings sync across devices
+        - 🔒 Per-tab bypass system
+        - 📱 Responsive design
+        
+        ## 📊 Bundle Information
+        
+        - **File:** `${{ steps.bundle.outputs.bundle_name }}`
+        - **Size:** ${{ steps.bundle.outputs.bundle_size }} bytes (${{ steps.bundle.outputs.bundle_size_kb }} KB)
+        - **Chrome Web Store Compatible:** ✅
+        
+        ## 🚀 Usage
+        
+        1. Click the SlowSurf icon in Chrome toolbar
+        2. Add websites you want to slow down
+        3. Set delay times for each site
+        4. Navigate to configured sites to see the delay in action
+        
+        ## 🐛 Issues & Support
+        
+        If you encounter any problems, please [open an issue](https://github.com/SullyJHF/slowsurf/issues).
+        
+        ---
+        
+        **Generated automatically by GitHub Actions** 🤖
+        EOF
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        name: SlowSurf v${{ steps.get_version.outputs.version_number }}
+        body_path: release_notes.md
+        files: |
+          dist/${{ steps.bundle.outputs.bundle_name }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: slowsurf-extension-${{ steps.get_version.outputs.version_number }}
+        path: dist/${{ steps.bundle.outputs.bundle_name }}
+        retention-days: 90
+    
+    - name: Success notification
+      run: |
+        echo "🎉 Release created successfully!"
+        echo "📦 Bundle: ${{ steps.bundle.outputs.bundle_name }}"
+        echo "📏 Size: ${{ steps.bundle.outputs.bundle_size_kb }} KB"
+        echo "🔗 Release: https://github.com/SullyJHF/slowsurf/releases/tag/${{ steps.get_version.outputs.version }}"

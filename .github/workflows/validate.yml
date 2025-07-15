@@ -1,0 +1,149 @@
+name: Validate Extension
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Validate manifest.json
+      run: |
+        echo "🔍 Validating manifest.json..."
+        
+        # Check if manifest.json exists
+        if [ ! -f "manifest.json" ]; then
+          echo "❌ manifest.json not found"
+          exit 1
+        fi
+        
+        # Validate JSON syntax
+        if ! python3 -m json.tool manifest.json > /dev/null 2>&1; then
+          echo "❌ Invalid JSON in manifest.json"
+          exit 1
+        fi
+        
+        # Check required fields
+        REQUIRED_FIELDS=("manifest_version" "name" "version" "description")
+        for field in "${REQUIRED_FIELDS[@]}"; do
+          if ! grep -q "\"$field\"" manifest.json; then
+            echo "❌ Missing required field: $field"
+            exit 1
+          fi
+        done
+        
+        # Check manifest version
+        MANIFEST_VERSION=$(grep '"manifest_version"' manifest.json | sed 's/.*"manifest_version": \([0-9]*\).*/\1/')
+        if [ "$MANIFEST_VERSION" != "3" ]; then
+          echo "❌ Extension uses Manifest V$MANIFEST_VERSION, but should use V3"
+          exit 1
+        fi
+        
+        echo "✅ manifest.json validation passed"
+    
+    - name: Validate required files
+      run: |
+        echo "🔍 Validating required files..."
+        
+        REQUIRED_FILES=("manifest.json" "background.js" "content.js" "delay.html" "delay.js" "options.html" "options.js" "styles.css")
+        
+        for file in "${REQUIRED_FILES[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          fi
+          echo "✅ Found: $file"
+        done
+        
+        echo "✅ All required files present"
+    
+    - name: Check for security issues
+      run: |
+        echo "🔒 Checking for security issues..."
+        
+        # Check for potentially dangerous patterns
+        DANGEROUS_PATTERNS=("eval(" "innerHTML.*=" "document.write(" "onclick=" "javascript:" "data:text/html")
+        
+        for pattern in "${DANGEROUS_PATTERNS[@]}"; do
+          if grep -r "$pattern" *.js *.html 2>/dev/null; then
+            echo "⚠️  Found potentially dangerous pattern: $pattern"
+            echo "Please review for security implications"
+          fi
+        done
+        
+        # Check for hardcoded secrets/tokens
+        if grep -r -i "token\|secret\|password\|key.*=" *.js *.html 2>/dev/null | grep -v "visitKey\|extensionKey"; then
+          echo "⚠️  Found potential hardcoded secrets"
+          echo "Please review for security implications"
+        fi
+        
+        echo "✅ Security check completed"
+    
+    - name: Validate icon files
+      run: |
+        echo "🖼️  Validating icon files..."
+        
+        ICON_FILES=("icons/icon16.png" "icons/icon48.png" "icons/icon128.png")
+        
+        for icon in "${ICON_FILES[@]}"; do
+          if [ ! -f "$icon" ]; then
+            echo "⚠️  Missing icon: $icon"
+            echo "Extension will work but won't have custom icons"
+          else
+            echo "✅ Found: $icon"
+          fi
+        done
+    
+    - name: Test bundle creation
+      run: |
+        echo "📦 Testing bundle creation..."
+        
+        # Test the bundle script
+        if [ -f "bundle.sh" ]; then
+          chmod +x bundle.sh
+          ./bundle.sh
+          
+          # Check if bundle was created
+          if [ -f "dist/slowsurf-v1.0.zip" ]; then
+            echo "✅ Bundle created successfully"
+            
+            # Check bundle size
+            BUNDLE_SIZE=$(wc -c < "dist/slowsurf-v1.0.zip" | tr -d ' ')
+            BUNDLE_SIZE_KB=$((BUNDLE_SIZE / 1024))
+            echo "📏 Bundle size: $BUNDLE_SIZE bytes ($BUNDLE_SIZE_KB KB)"
+            
+            # Check Chrome Web Store size limit
+            MAX_SIZE=$((10 * 1024 * 1024))
+            if [ $BUNDLE_SIZE -gt $MAX_SIZE ]; then
+              echo "❌ Bundle size exceeds Chrome Web Store limit (10MB)"
+              exit 1
+            fi
+            
+            echo "✅ Bundle size within limits"
+          else
+            echo "❌ Bundle creation failed"
+            exit 1
+          fi
+        else
+          echo "⚠️  bundle.sh not found, skipping bundle test"
+        fi
+    
+    - name: Summary
+      run: |
+        echo "🎉 Validation completed successfully!"
+        echo "Extension is ready for:"
+        echo "- Chrome Web Store submission"
+        echo "- Manual installation"
+        echo "- GitHub release"
