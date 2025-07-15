@@ -78,7 +78,17 @@ class SlowSurfOptions {
     this.settings = result;
     
     document.getElementById('enableExtension').checked = this.settings.enabled;
-    document.getElementById('defaultDelay').value = this.secondsToTimeString(this.settings.defaultDelay);
+    document.getElementById('defaultDelay').value = this.secondsToInputString(this.settings.defaultDelay);
+  }
+
+  // For input fields, show clean format without 's' for seconds
+  secondsToInputString(seconds) {
+    if (seconds < 60) {
+      return `${seconds}`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
   bindEvents() {
@@ -125,7 +135,7 @@ class SlowSurfOptions {
     });
 
     websiteInput.value = '';
-    delayInput.value = this.secondsToTimeString(this.settings.defaultDelay);
+    delayInput.value = this.secondsToInputString(this.settings.defaultDelay);
     
     this.renderWebsiteList();
     this.autoSave();
@@ -241,7 +251,7 @@ class SlowSurfOptions {
       this.renderWebsiteList();
       
       // Reset the website delay input to default
-      document.getElementById('websiteDelay').value = this.secondsToTimeString(this.settings.defaultDelay);
+      document.getElementById('websiteDelay').value = this.secondsToInputString(this.settings.defaultDelay);
     }
   }
 }
