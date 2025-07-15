@@ -4,13 +4,13 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'PRIVACY_POLICY.html'
-      - 'index.html'
-      - '404.html'
-      - 'nginx.conf'
-      - 'Dockerfile'
-      - 'docker-compose.yml'
-      - 'deploy.sh'
+      - 'website/PRIVACY_POLICY.html'
+      - 'website/index.html'
+      - 'website/404.html'
+      - 'website/nginx.conf'
+      - 'website/Dockerfile'
+      - 'website/docker-compose.yml'
+      - 'website/deploy.sh'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -34,6 +34,7 @@ jobs:
         ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
           cd ~/slowsurf
           git pull origin main
+          cd website
           ./deploy.sh
         EOF
         

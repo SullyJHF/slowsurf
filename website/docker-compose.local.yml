@@ -1,0 +1,16 @@
+services:
+  slowsurf-web:
+    build: .
+    container_name: slowsurf-web-local
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge

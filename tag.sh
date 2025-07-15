@@ -162,9 +162,10 @@ main() {
     echo ""
     echo -e "${YELLOW}This will:${NC}"
     echo -e "${YELLOW}1. Update manifest.json version from $current_version to $new_version${NC}"
-    echo -e "${YELLOW}2. Commit the change with message 'Version v$new_version'${NC}"
-    echo -e "${YELLOW}3. Create git tag 'v$new_version'${NC}"
-    echo -e "${YELLOW}4. Push commit and tag to origin${NC}"
+    echo -e "${YELLOW}2. Create extension bundle for Chrome Web Store${NC}"
+    echo -e "${YELLOW}3. Commit the change with message 'Version v$new_version'${NC}"
+    echo -e "${YELLOW}4. Create git tag 'v$new_version'${NC}"
+    echo -e "${YELLOW}5. Push commit and tag to origin${NC}"
     echo ""
     read -p "Do you want to continue? (y/N): " -n 1 -r
     echo
@@ -178,6 +179,15 @@ main() {
     
     # Update manifest.json
     update_manifest_version "$new_version"
+    
+    # Run bundle script to create extension package
+    echo -e "${BLUE}📦 Creating extension bundle...${NC}"
+    if [ -f "./bundle.sh" ]; then
+        ./bundle.sh
+        echo -e "${GREEN}✅ Extension bundle created${NC}"
+    else
+        echo -e "${YELLOW}⚠️  bundle.sh not found, skipping bundle creation${NC}"
+    fi
     
     # Stage the manifest.json change
     git add manifest.json

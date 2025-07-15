@@ -103,8 +103,8 @@ for file in "${OPTIONAL_FILES[@]}"; do
     fi
 done
 
-# Execute the zip command
-eval $zip_command > /dev/null
+# Execute the zip command (exclude website directory)
+eval $zip_command -x "website/*" > /dev/null
 
 # Show bundle contents
 echo -e "${YELLOW}📋 Bundle contents:${NC}"

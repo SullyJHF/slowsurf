@@ -13,7 +13,13 @@
       "Bash(git push:*)",
       "Bash(./tag.sh:*)",
       "Bash(convert:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker run:*)",
+      "Bash(curl:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }
