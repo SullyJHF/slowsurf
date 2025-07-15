@@ -5,7 +5,11 @@
       "Bash(mkdir:*)",
       "Bash(git add:*)",
       "Bash(chmod:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(magick identify:*)",
+      "Bash(magick:*)",
+      "Bash(./bundle.sh)"
     ],
     "deny": []
   }
