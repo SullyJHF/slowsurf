@@ -19,6 +19,16 @@ class SlowSurfBackground {
 
   async handleTabUpdate(tabId, url) {
     try {
+      // Skip if URL is already our extension page (prevent infinite loop)
+      if (url.startsWith(chrome.runtime.getURL(''))) {
+        return;
+      }
+
+      // Skip excluded URLs
+      if (this.isExcludedUrl(url)) {
+        return;
+      }
+
       const settings = await this.getSettings();
       
       if (!settings.enabled) {
@@ -37,6 +47,21 @@ class SlowSurfBackground {
     } catch (error) {
       console.error('Error in handleTabUpdate:', error);
     }
+  }
+
+  isExcludedUrl(url) {
+    const excludedPatterns = [
+      'chrome://',
+      'chrome-extension://',
+      'moz-extension://',
+      'about:',
+      'data:',
+      'file://',
+      'localhost',
+      '127.0.0.1'
+    ];
+
+    return excludedPatterns.some(pattern => url.includes(pattern));
   }
 
   async getSettings() {
