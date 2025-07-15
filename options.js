@@ -107,7 +107,7 @@ class SlowSurfOptions {
     }
 
     if (!this.validateTimeInput(delayTimeString)) {
-      alert('Please enter a valid time format: seconds (e.g., 30s) or MM:SS (e.g., 1:30) between 5s and 15:00');
+      alert('Please enter a valid time format: seconds (e.g., 30) or MM:SS (e.g., 1:30) between 5s and 15:00');
       return;
     }
 
