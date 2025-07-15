@@ -20,7 +20,7 @@ class SlowSurfOptions {
   async loadSettings() {
     const result = await chrome.storage.sync.get({
       enabled: true,
-      defaultDelay: 10,
+      defaultDelay: 30,
       websites: []
     });
     
@@ -170,7 +170,7 @@ class SlowSurfOptions {
     if (confirm('Are you sure you want to reset all settings to defaults?')) {
       this.settings = {
         enabled: true,
-        defaultDelay: 10,
+        defaultDelay: 30,
         websites: []
       };
       

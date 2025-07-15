@@ -31,7 +31,7 @@ The extension will be available on the Chrome Web Store once reviewed and approv
 
 1. Click the SlowSurf icon in your Chrome toolbar
 2. Configure your global settings:
-   - Default delay time (10 seconds recommended)
+   - Default delay time (30 seconds recommended)
    - Enable/disable the extension
 3. Add websites you want to slow down:
    - Enter the website pattern (e.g., `reddit.com`)

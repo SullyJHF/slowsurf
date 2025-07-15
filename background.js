@@ -104,7 +104,7 @@ class SlowSurfBackground {
   async getSettings() {
     const result = await chrome.storage.sync.get({
       enabled: true,
-      defaultDelay: 10,
+      defaultDelay: 30,
       websites: []
     });
     return result;

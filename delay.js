@@ -13,7 +13,7 @@ class SlowSurfDelay {
   parseUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
     this.targetUrl = decodeURIComponent(urlParams.get('target') || '');
-    this.delaySeconds = parseInt(urlParams.get('delay') || '10');
+    this.delaySeconds = parseInt(urlParams.get('delay') || '30');
     this.pattern = decodeURIComponent(urlParams.get('pattern') || '');
 
     document.getElementById('targetWebsite').textContent = this.extractDomain(this.targetUrl);
