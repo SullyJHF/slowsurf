@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlowSurf Privacy Policy</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        .last-updated {
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        .highlight {
+            background-color: #e8f5e8;
+            padding: 15px;
+            border-left: 4px solid #27ae60;
+            margin: 15px 0;
+        }
+        .permission-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .permission-title {
+            font-weight: bold;
+            color: #495057;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .contact-info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SlowSurf Privacy Policy</h1>
+        
+        <div class="last-updated">
+            Last updated: January 2025
+        </div>
+
+        <div class="highlight">
+            <strong>Privacy-First Approach:</strong> SlowSurf is designed with your privacy as the top priority. We collect no personal data, make no external requests, and store only the website patterns you explicitly configure.
+        </div>
+
+        <h2>1. Information We Collect</h2>
+        <p>SlowSurf collects and stores only the following information that you explicitly provide:</p>
+        <ul>
+            <li><strong>Website patterns:</strong> The website URLs or patterns you configure to be delayed (e.g., "reddit.com", "*.facebook.com")</li>
+            <li><strong>Delay times:</strong> The delay duration you set for each website pattern</li>
+            <li><strong>Extension settings:</strong> Whether the extension is enabled or disabled</li>
+        </ul>
+        <p><strong>We do NOT collect:</strong></p>
+        <ul>
+            <li>Your browsing history</li>
+            <li>The content of websites you visit</li>
+            <li>Personal information (name, email, etc.)</li>
+            <li>Usage analytics or telemetry</li>
+            <li>Any data from websites you visit</li>
+        </ul>
+
+        <h2>2. How We Use Your Information</h2>
+        <p>The information stored by SlowSurf is used exclusively for:</p>
+        <ul>
+            <li>Determining which websites should show a delay page based on your configured patterns</li>
+            <li>Displaying the appropriate delay time for each website</li>
+            <li>Maintaining your settings across browser sessions</li>
+            <li>Syncing your settings across your Chrome devices (through Chrome's built-in sync)</li>
+        </ul>
+
+        <h2>3. Data Storage and Security</h2>
+        <p>Your data is stored using Chrome's secure storage API:</p>
+        <ul>
+            <li><strong>Local storage:</strong> All data is stored locally on your device</li>
+            <li><strong>Chrome sync:</strong> Settings sync across your devices using Chrome's encrypted sync system</li>
+            <li><strong>No external servers:</strong> SlowSurf never sends your data to external servers</li>
+            <li><strong>No tracking:</strong> No cookies, tracking pixels, or analytics are used</li>
+        </ul>
+
+        <h2>4. Permission Usage</h2>
+        <p>SlowSurf requires specific permissions to function. Here's exactly how each permission is used:</p>
+
+        <div class="permission-box">
+            <div class="permission-title">activeTab</div>
+            <ul>
+                <li>Access the URL of the currently active tab when you navigate</li>
+                <li>Compare the URL against your configured website patterns</li>
+                <li>Only activated when you actively navigate to a new page</li>
+            </ul>
+        </div>
+
+        <div class="permission-box">
+            <div class="permission-title">tabs</div>
+            <ul>
+                <li>Read tab properties (URLs) to match against your patterns</li>
+                <li>Update tab URLs when redirecting to the delay page</li>
+                <li>Clean up session data when tabs are closed</li>
+                <li>Does not access tab content, only basic properties</li>
+            </ul>
+        </div>
+
+        <div class="permission-box">
+            <div class="permission-title">storage</div>
+            <ul>
+                <li>Save your website patterns and delay settings</li>
+                <li>Enable settings sync across your Chrome devices</li>
+                <li>Store only user-configured data (no browsing history)</li>
+            </ul>
+        </div>
+
+        <div class="permission-box">
+            <div class="permission-title">declarativeNetRequest</div>
+            <ul>
+                <li>Intercept navigation requests to your configured websites</li>
+                <li>Redirect matching URLs to the delay page</li>
+                <li>Process only URLs that match your explicit patterns</li>
+                <li>Operates entirely locally without external communication</li>
+            </ul>
+        </div>
+
+        <div class="permission-box">
+            <div class="permission-title">Host Permissions (&lt;all_urls&gt;)</div>
+            <ul>
+                <li>Inject minimal content script for URL interception</li>
+                <li>Required because users can configure any website pattern</li>
+                <li>Content script only performs basic URL checking</li>
+                <li>No access to page content or user data</li>
+            </ul>
+        </div>
+
+        <h2>5. Data Sharing</h2>
+        <p><strong>We do not share, sell, or transfer your data to any third parties.</strong></p>
+        <ul>
+            <li>No data is sent to external servers</li>
+            <li>No analytics or tracking services are used</li>
+            <li>No advertising networks have access to your data</li>
+            <li>Settings sync only through Chrome's secure sync system</li>
+        </ul>
+
+        <h2>6. Data Retention</h2>
+        <ul>
+            <li><strong>User control:</strong> You can delete your data at any time by removing the extension</li>
+            <li><strong>Local storage:</strong> Data is stored locally until you uninstall the extension</li>
+            <li><strong>No server storage:</strong> We maintain no servers or databases containing your data</li>
+        </ul>
+
+        <h2>7. Your Rights</h2>
+        <p>You have complete control over your data:</p>
+        <ul>
+            <li><strong>Access:</strong> View all your settings through the extension popup</li>
+            <li><strong>Modify:</strong> Add, edit, or remove website patterns and delay times</li>
+            <li><strong>Delete:</strong> Remove individual entries or reset all settings</li>
+            <li><strong>Export:</strong> Chrome's sync system allows you to maintain settings across devices</li>
+            <li><strong>Complete removal:</strong> Uninstalling the extension removes all stored data</li>
+        </ul>
+
+        <h2>8. Children's Privacy</h2>
+        <p>SlowSurf does not knowingly collect any information from children under 13. The extension is designed for general productivity use and does not target children specifically.</p>
+
+        <h2>9. Changes to This Policy</h2>
+        <p>We may update this privacy policy from time to time. Any changes will be:</p>
+        <ul>
+            <li>Posted on this page with an updated "Last updated" date</li>
+            <li>Communicated through the Chrome Web Store if significant changes occur</li>
+            <li>Implemented only after user notification for major changes</li>
+        </ul>
+
+        <h2>10. Open Source</h2>
+        <p>SlowSurf is open source software. You can review the complete source code on GitHub to verify our privacy claims and see exactly how the extension works.</p>
+
+        <div class="contact-info">
+            <h2>Contact Us</h2>
+            <p>If you have any questions about this privacy policy or SlowSurf's data practices, please contact us:</p>
+            <ul>
+                <li><strong>GitHub:</strong> <a href="https://github.com/SullyJHF/slowsurf">https://github.com/SullyJHF/slowsurf</a></li>
+                <li><strong>Chrome Web Store:</strong> Contact through the extension's support tab</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
