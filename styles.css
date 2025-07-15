@@ -22,6 +22,54 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Popup-specific styles (when opened from extension icon) */
+body.popup .container {
+  max-width: none;
+  width: 450px;
+  margin: 0;
+  padding: 16px;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 500px;
+}
+
+body.popup header h1 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+body.popup header p {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+body.popup .settings-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+}
+
+body.popup .settings-section h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+body.popup .add-website {
+  flex-direction: column;
+  gap: 8px;
+}
+
+body.popup .add-website input[type="text"] {
+  width: 100%;
+}
+
+body.popup .add-website input[type="number"] {
+  width: 100%;
+}
+
+body.popup .examples {
+  display: none; /* Hide examples in popup to save space */
+}
+
 header h1 {
   color: #2c3e50;
   margin-bottom: 5px;

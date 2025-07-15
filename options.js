@@ -4,9 +4,17 @@ class SlowSurfOptions {
   }
 
   async init() {
+    this.detectPopupMode();
     await this.loadSettings();
     this.bindEvents();
     this.renderWebsiteList();
+  }
+
+  detectPopupMode() {
+    // Check if this is opened as a popup (small window dimensions)
+    if (window.innerWidth < 500 || window.innerHeight < 600) {
+      document.body.classList.add('popup');
+    }
   }
 
   async loadSettings() {
