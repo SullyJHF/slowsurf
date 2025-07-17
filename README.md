@@ -109,7 +109,6 @@ slowsurf/
 - `activeTab`: Access to the currently active tab
 - `tabs`: Read tab properties for URL matching
 - `storage`: Store and sync user preferences
-- `declarativeNetRequest`: Handle URL interception
 - `<all_urls>`: Required for content script injection
 
 ## Development
