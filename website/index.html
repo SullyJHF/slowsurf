@@ -165,14 +165,42 @@
                 grid-template-columns: 1fr;
             }
             
+            .actions {
+                gap: 15px;
+            }
+            
             .action-buttons {
                 flex-direction: column;
                 width: 100%;
+                align-items: center;
+            }
+            
+            /* Reorder buttons for mobile - Chrome Extension first */
+            #chromeStoreBtn {
+                order: 1;
+            }
+            
+            #githubBtn {
+                order: 2;
+            }
+            
+            #privacyBtn {
+                order: 3;
             }
             
             .btn {
                 width: 100%;
                 max-width: 300px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .actions {
+                gap: 10px;
+            }
+            
+            .btn {
+                max-width: none;
             }
         }
     </style>
@@ -187,9 +215,9 @@
         <main class="content">
             <div class="actions">
                 <div class="action-buttons">
-                    <a href="https://github.com/SullyJHF/slowsurf" class="btn">View on GitHub</a>
+                    <a href="https://github.com/SullyJHF/slowsurf" class="btn" id="githubBtn">View on GitHub</a>
                     <a href="#" class="btn primary" id="chromeStoreBtn">Get Chrome Extension</a>
-                    <a href="/privacy" class="btn">Privacy Policy</a>
+                    <a href="/privacy" class="btn" id="privacyBtn">Privacy Policy</a>
                 </div>
                 
                 <div class="kofi-container">
