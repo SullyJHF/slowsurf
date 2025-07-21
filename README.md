@@ -106,7 +106,6 @@ slowsurf/
 
 ### Permissions
 
-- `activeTab`: Access to the currently active tab
 - `tabs`: Read tab properties for URL matching
 - `storage`: Store and sync user preferences
 - `<all_urls>`: Required for content script injection
